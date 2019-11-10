@@ -1,0 +1,3 @@
+[submodule "kotatogram-desktop"]
+	path = kotatogram-desktop
+	url = https://github.com/kotatogram/kotatogram-desktop.git
