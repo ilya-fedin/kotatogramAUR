@@ -1,0 +1,59 @@
+stages:
+  - package
+
+package-aur:
+  image: archlinux/base
+  stage: package
+  dependencies: []
+  only:
+    - /^k(\d+\.)*\d+$/
+  before_script: []
+  script:
+    - cd ./pkg/aur
+
+    - _version=$(echo $CI_COMMIT_REF_NAME | cut -c 2-)
+    - echo "Pushing'v$_version'"
+
+    # - sourceURL=https://git.auteiy.me/dmitry/cursorsPosy/-/archive/v$_version/cursorsPosy-v$_version.tar.gz?path=themes
+    # - 'echo "Source: $sourceURL"'
+    # - echo "Checking sha256sum checksums"
+    # - 'sourceSHA=$(curl -sSL "$sourceURL" | sha256sum | cut -d" " -f1)'
+
+    # Update PKGBUILD version, source URL and sha256sum
+    - echo "Updating PKGBUILDS with release information..."
+    - sed "s/^pkgver=.*\$/pkgver=$_version/" -i kotatogram-desktop/PKGBUILD
+    - sed "s/^source=(\"\(.*\)::.*\").*\$/source=(\"\1::$(echo $sourceURL | sed 's/\//\\\//g')\")/" -i kotatogram-desktop/PKGBUILD
+    # - sed "s/^sha256sums=.*\$/sha256sums=('$sourceSHA')/" -i kotatogram-desktop/PKGBUILD
+
+    - echo "Installing Arch"
+    - pacman -Syu --noconfirm sudo base-devel openssh git openssl
+
+    # makepkg and .SRCINFO
+    - cd kotatogram-desktop/
+    - echo "makepkg"
+    - sudo -u nobody makepkg -c
+    - sudo -u nobody makepkg --printsrcinfo > .SRCINFO
+    - cd ..
+
+    # Configure SSH
+    - mkdir -p /root/.ssh
+    - cp ./aur.pub /root/.ssh/id_rsa.pub
+    - echo "$sshAUR" | base64 -d > /root/.ssh/id_rsa
+    - echo "Host aur.archlinux.org" >> /root/.ssh/config
+    - echo "  IdentityFile /root/.ssh/aur" >> /root/.ssh/config
+    - echo "  User aur" >> /root/.ssh/config
+    - chmod 600 /root/.ssh/{id_rsa*,config}
+    - eval `ssh-agent -s`
+    - echo -en "${sshPASSPHRASE}" | ssh-add /root/.ssh/id_rsa
+    - ssh-keyscan -H aur.archlinux.org >> /root/.ssh/known_hosts
+    - git config --global user.name "Dmitry Porunov"
+    - git config --global user.email "dmitry@auteiy.me"
+
+    # Clone, commit and push
+    - git clone ssh://aur@aur.archlinux.org/kotatogram-desktop.git aur-kotatogram-desktop
+    - cd aur-kotatogram-desktop
+    - cp ../kotatogram-desktop/ ./
+    - git add --all
+    - git commit -m "Release v$_version"
+    - git push
+    - cd ..
