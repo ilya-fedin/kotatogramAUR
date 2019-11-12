@@ -25,7 +25,7 @@ package-aur:
           # - sed "s/^sha256sums=.*\$/sha256sums=('$sourceSHA')/" -i kotatogram-desktop/PKGBUILD
         
         - echo "Installing Arch"
-        - pacman -S reflector --noconfirm
+        - pacman -Sy reflector --noconfirm
         - reflector --verbose --latest 50 --sort rate --save /etc/pacman.d/mirrorlist
         - pacman -Syu --noconfirm sudo base-devel openssh git ffmpeg hicolor-icon-theme minizip openal qt5-base qt5-imageformats openssl cmake git gyp range-v3 python libappindicator-gtk3
 
