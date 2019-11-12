@@ -26,7 +26,6 @@ makedepends=(
         range-v3
         python
         libappindicator-gtk3
-        dos2unix
         )
 optdepends=(
         'libnotify: desktop notifications'
