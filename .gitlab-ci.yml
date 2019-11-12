@@ -1,15 +1,10 @@
 stages:
-    - updatePKGBUILD
-    - arch
-    - build
-    - srcinfo
-    - ssh
-    - aur
+    - package-aur
 
 
-Update PKGBUILD:
+package-aur:
     image: archlinux/base
-    stage: updatePKGBUILD
+    stage: package-aur
     only:
         - /^k(\d+\.)*\d+$/
     script:
@@ -28,36 +23,16 @@ Update PKGBUILD:
         - sed "s/^pkgver=.*\$/pkgver=$_version/" -i kotatogram-desktop/PKGBUILD
         - sed "s/^source=(\"\(.*\)::.*\").*\$/source=(\"\1::$(echo $sourceURL | sed 's/\//\\\//g')\")/" -i kotatogram-desktop/PKGBUILD
           # - sed "s/^sha256sums=.*\$/sha256sums=('$sourceSHA')/" -i kotatogram-desktop/PKGBUILD
-
-Install Arch:
-    stage: arch
-    only:
-        - /^k(\d+\.)*\d+$/
-    script:
+        
         - echo "Installing Arch"
         - pacman -Syu --noconfirm sudo base-devel openssh git ffmpeg hicolor-icon-theme minizip openal qt5-base qt5-imageformats openssl cmake git gyp range-v3 python libappindicator-gtk3
 
-buildKotatogram:
-    stage: build
-    only:
-        - /^k(\d+\.)*\d+$/
-    script:
         - cd ./pkg/aur/kotatogram-desktop/
         - echo "makepkg"
         - sudo -u nobody makepkg -c
 
-updateSRCINFO:
-    stage: srcinfo
-    only:
-        - /^k(\d+\.)*\d+$/
-    script:
         - sudo -u nobody makepkg --printsrcinfo > .SRCINFO
 
-configureSSH:
-    stage: ssh
-    only:
-        - /^k(\d+\.)*\d+$/
-    script:
         - mkdir -p /root/.ssh
         - cp .pkg/aur/aur.pub /root/.ssh/id_rsa.pub
         - echo "$sshAUR" | base64 -d > /root/.ssh/id_rsa
@@ -71,11 +46,6 @@ configureSSH:
         - git config --global user.name "Dmitry Porunov"
         - git config --global user.email "dmitry@auteiy.me"
 
-updateAUR:
-    stage: aur
-    only:
-        - /^k(\d+\.)*\d+$/
-    script:
         - cd .pkg/aur
         - git clone ssh://aur@aur.archlinux.org/kotatogram-desktop.git aur-kotatogram-desktop
         - cd aur-kotatogram-desktop
