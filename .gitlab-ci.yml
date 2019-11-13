@@ -13,7 +13,7 @@ package-aur:
         - _version=$(echo $CI_COMMIT_REF_NAME | cut -c 2-)
         - echo "Pushing'v$_version'"
 
-          Update PKGBUILD version, source URL and sha256sum
+          # Update PKGBUILD version, source URL and sha256sum
         - echo "Updating PKGBUILDS with release information..."
         - sed "s/^pkgver=.*\$/pkgver=$_version/" -i kotatogram-desktop/PKGBUILD
         
