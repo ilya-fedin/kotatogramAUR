@@ -3,7 +3,7 @@
 pkgname=kotatogram-desktop-bin
 pkgver=0.0.0 # automatically set in CI, see: /.gitlab-ci.yml
 pkgrel=1
-pkgdesc="Official desktop version of Telegram messaging app - Static binaries"
+pkgdesc="Experimental Telegram Desktop fork with option to select custom fonts. - Static binaries"
 arch=(x86_64)
 url="https://github.com/kotatogram/kotatogram-desktop"
 license=(GPL3)
@@ -18,20 +18,20 @@ makedepends=(
     chrpath
 )
 optdepends=(
-    'libappindicator-gtk2: to hide Telegram in the tray bar (GTK2-based desktop environment)'
-    'libappindicator-gtk3: to hide Telegram in the tray bar (GTK3-based desktop environment)'
-    'libappindicator-sharp: to hide Telegram in the tray bar (Unity-based desktop environment)'
+    'libappindicator-gtk2: to hide Kotatogram in the tray bar (GTK2-based desktop environment)'
+    'libappindicator-gtk3: to hide Kotatogram in the tray bar (GTK3-based desktop environment)'
+    'libappindicator-sharp: to hide Kotatogram in the tray bar (Unity-based desktop environment)'
     'xdg-utils: for automatic opening of URLs, files and directories in proper applications'
 )
-conflicts=('kotatogram-desktop-desktop')
+conflicts=('kotatogram-desktop')
 provides=('kotatogram-desktop')
 
 # Sources
 source=(
 	$pkgname-$pkgver::$url/releases/download/k$pkgver/$pkgver.tar.xz
 
-	$url/blob/dev/lib/xdg/tg.protocol
-	$url/blob/dev/lib/xdg/kotatogramdesktop.desktop
+	https://raw.githubusercontent.com/kotatogram/kotatogram-desktop/k$pkgver/lib/xdg/tg.protocol
+	https://raw.githubusercontent.com/kotatogram/kotatogram-desktop/k$pkgver/lib/xdg/kotatogramdesktop.desktop
 	
 	$url/raw/master/Telegram/Resources/art/icon{16,32,48,64,128,256,512}.png
 
