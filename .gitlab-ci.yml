@@ -29,14 +29,23 @@ package-aur:
         - reflector --verbose --latest 50 --sort rate --save /etc/pacman.d/mirrorlist
         - pacman -Syu --noconfirm sudo base-devel openssh git ffmpeg hicolor-icon-theme minizip openal qt5-base qt5-imageformats openssl cmake git gyp range-v3 python libappindicator-gtk3
 
-        - cd kotatogram-desktop/
-        - echo "makepkg"
         - sed -i '/MAKEFLAGS/s/^#//g' /etc/makepkg.conf
         - sed -i '/MAKEFLAGS/s/-j1/-j$(($(nproc)-1))/g' /etc/makepkg.conf
+        
+        - cd kotatogram-desktop/
+        - echo "makepkg"
+        - updpkgsums
         # - sudo -u nobody makepkg -c
         - sudo -u nobody makepkg --printsrcinfo > .SRCINFO
         - cd ..
 
+        - cd kotatogram-desktop-bin/
+        - echo "makepkg"
+        - updpkgsums
+        # - sudo -u nobody makepkg -c
+        - sudo -u nobody makepkg --printsrcinfo > .SRCINFO
+        - cd ..
+        
         - mkdir -p /root/.ssh
         - cp ./aur.pub /root/.ssh/id_rsa.pub
         - echo -en "$sshAUR" | base64 -d > /root/.ssh/id_rsa
@@ -56,3 +65,12 @@ package-aur:
         - git add --all
         - git commit -m "Release k$_version"
         - git push
+        - cd ..
+        
+        - git clone ssh://aur@aur.archlinux.org/kotatogram-desktop-bin.git aur-kotatogram-desktop-bin
+        - cp -r kotatogram-desktop-bin/. aur-kotatogram-desktop-bin
+        - cd aur-kotatogram-desktop-bin
+        - git add --all
+        - git commit -m "Release k$_version"
+        - git push
+        - cd ..
