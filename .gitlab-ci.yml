@@ -31,6 +31,8 @@ package-aur:
 
         - cd kotatogram-desktop/
         - echo "makepkg"
+        - sed -i '/MAKEFLAGS/s/^#//g' /etc/makepkg.conf
+        - sed -i '/MAKEFLAGS/s/-j1/-j$(($(nproc)-1))/g' /etc/makepkg.conf
         - sudo -u nobody makepkg -c
 
         - sudo -u nobody makepkg --printsrcinfo > .SRCINFO
