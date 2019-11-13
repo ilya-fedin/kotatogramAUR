@@ -33,27 +33,26 @@ package-aur:
         - echo "makepkg"
         - sed -i '/MAKEFLAGS/s/^#//g' /etc/makepkg.conf
         - sed -i '/MAKEFLAGS/s/-j1/-j$(($(nproc)-1))/g' /etc/makepkg.conf
-        - sudo -u nobody makepkg -c
-
+        # - sudo -u nobody makepkg -c
         - sudo -u nobody makepkg --printsrcinfo > .SRCINFO
+        - cd ..
 
         - mkdir -p /root/.ssh
-        - cp ../aur.pub /root/.ssh/id_rsa.pub
-        - echo "$sshAUR" | base64 -d > /root/.ssh/id_rsa
+        - cp ./aur.pub /root/.ssh/id_rsa.pub
+        - echo -en "$sshAUR" | base64 -d > /root/.ssh/id_rsa
         - echo "Host aur.archlinux.org" >> /root/.ssh/config
         - echo "  IdentityFile /root/.ssh/aur" >> /root/.ssh/config
         - echo "  User aur" >> /root/.ssh/config
         - chmod 600 /root/.ssh/{id_rsa*,config}
         - eval `ssh-agent -s`
-        - echo -en "${sshPASSPHRASE}" | ssh-add /root/.ssh/id_rsa
+        - echo -en ${sshPASSPHRASE} | ssh-add /root/.ssh/id_rsa
         - ssh-keyscan -H aur.archlinux.org >> /root/.ssh/known_hosts
         - git config --global user.name "Dmitry Porunov"
         - git config --global user.email "dmitry@auteiy.me"
 
-        - cd ..
         - git clone ssh://aur@aur.archlinux.org/kotatogram-desktop.git aur-kotatogram-desktop
+        - cp -r kotatogram-desktop/. aur-kotatogram-desktop
         - cd aur-kotatogram-desktop
-        - cp ../kotatogram-desktop/ ./
         - git add --all
-        - git commit -m "Release v$_version"
+        - git commit -m "Release k$_version"
         - git push
