@@ -24,7 +24,7 @@ package-aur:
         - echo "Installing Arch"
         - pacman -Sy reflector --noconfirm
         - reflector --verbose --latest 50 --sort rate --save /etc/pacman.d/mirrorlist
-        - pacman -Syu --noconfirm base-devel cmake ffmpeg git git gyp hicolor-icon-theme libappindicator-gtk3 minizip openal openssh openssl pacman-contrib python qt5-base qt5-imageformats range-v3 sudo
+        - pacman -Syu --noconfirm base-devel chrpath cmake ffmpeg git git gyp hicolor-icon-theme libappindicator-gtk3 minizip openal openssh openssl pacman-contrib python qt5-base qt5-imageformats range-v3 sudo
         - sed -i '/MAKEFLAGS/s/^#//g' /etc/makepkg.conf
         - sed -i '/MAKEFLAGS/s/-j1/-j$(($(nproc)-1))/g' /etc/makepkg.conf
         
