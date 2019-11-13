@@ -33,15 +33,15 @@ package-aur:
         
         - cd kotatogram-desktop/
         - echo "makepkg"
-        - updpkgsums
+        - sudo -u nobody updpkgsums
         # - sudo -u nobody makepkg -c
         - sudo -u nobody makepkg --printsrcinfo > .SRCINFO
         - cd ..
 
         - cd kotatogram-desktop-bin/
         - echo "makepkg"
-        - updpkgsums
-        # - sudo -u nobody makepkg -c
+        - sudo -u nobody updpkgsums
+        - sudo -u nobody makepkg -c
         - sudo -u nobody makepkg --printsrcinfo > .SRCINFO
         - cd ..
         
