@@ -13,33 +13,38 @@ package-aur:
         - _version=$(echo $CI_COMMIT_REF_NAME | cut -c 2-)
         - echo "Pushing'v$_version'"
 
-          # Update PKGBUILD version, source URL and sha256sum
+          # Update version in PKGBUILD
         - echo "Updating PKGBUILDS with release information..."
+
         - sed "s/^pkgver=.*\$/pkgver=$_version/" -i kotatogram-desktop/PKGBUILD
-        
         - sed "s/^pkgver=.*\$/pkgver=$_version/" -i kotatogram-desktop-bin/PKGBUILD
-        
+ 
+          # Install dependencies
         - echo "Installing Arch"
         - pacman -Sy reflector --noconfirm
         - reflector --verbose --latest 50 --sort rate --save /etc/pacman.d/mirrorlist
         - pacman -Syu --noconfirm base-devel chrpath cmake ffmpeg git git gyp hicolor-icon-theme libappindicator-gtk3 minizip openal openssh openssl pacman-contrib python qt5-base qt5-imageformats range-v3 sudo
-        - sed -i '/MAKEFLAGS/s/^#//g' /etc/makepkg.conf
+
+          # Speed up build process
+        - sed -i '/MAKEFLAGS=/s/^#//g' /etc/makepkg.conf
         - sed -i '/MAKEFLAGS/s/-j1/-j$(($(nproc)-1))/g' /etc/makepkg.conf
         
+          # Update sha512sums and .SRCINFO for both packages
         - cd kotatogram-desktop/
         - echo "makepkg"
         - sudo -u nobody updpkgsums
-        # - sudo -u nobody makepkg -c
+        - sudo -u nobody makepkg -c
         - sudo -u nobody makepkg --printsrcinfo > .SRCINFO
         - cd ..
 
         - cd kotatogram-desktop-bin/
         - echo "makepkg"
         - sudo -u nobody updpkgsums
-        # - sudo -u nobody makepkg -c
+        - sudo -u nobody makepkg -c
         - sudo -u nobody makepkg --printsrcinfo > .SRCINFO
         - cd ..
         
+          # Configure SSH
         - mkdir -p /root/.ssh
         - cp ./aur.pub /root/.ssh/id_rsa.pub
         - echo -en "$sshAUR" | base64 -d > /root/.ssh/id_rsa
@@ -53,6 +58,7 @@ package-aur:
         - git config --global user.name "Dmitry Porunov"
         - git config --global user.email "dmitry@auteiy.me"
 
+          # Push both packages to AUR
         - git clone ssh://aur@aur.archlinux.org/kotatogram-desktop.git aur-kotatogram-desktop
         - cp -r kotatogram-desktop/. aur-kotatogram-desktop
         - cd aur-kotatogram-desktop
