@@ -31,7 +31,7 @@ optdepends=(
         'libnotify: desktop notifications'
         )
 source=(
-        "$pkgname-$pkgver::git+$url.git#tag=k$pkgver"
+        "$pkgname-$pkgver-$pkgrel::git+$url.git#tag=k$pkgver"
         "Catch2::git+https://github.com/catchorg/Catch2.git"
         "crl::git+https://github.com/telegramdesktop/crl.git"
         "GSL::git+https://github.com/Microsoft/GSL.git"
@@ -57,34 +57,32 @@ source=(
 
        )
 # Checksums automatically set in CI, see: /.gitlab-ci.yml
-sha512sums=(
-        'SKIP'
-        'SKIP'
-        'SKIP'
-        'SKIP'
-        'SKIP'
-        'SKIP'
-        'SKIP'
-        'SKIP'
-        'SKIP'
-        'SKIP'
-        'SKIP'
-        'SKIP'
-        'SKIP'
-        'SKIP'
-        'SKIP'
-        'SKIP'
-        'SKIP'
-        'SKIP'
-        'auto'
-        'auto'
-        'auto'
-        'auto'
-        )
+sha512sums=('SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            '98236f7f161c8bad1152a77505f9c3eebae06ffc0420ed476e101359a92d01438dd6ce6062e0b110b76f2d6d09f59accf4b1969699b8af5a3650ecb0c31929c5'
+            '117b0c2bae3d3d3aa94d41382621be4e05c3314a2831dba59e1bcfb443e7b8ff4bcd0403544fa0cb6def85b444146bf59eef9da25f96b041d3ce8f5429b4a867'
+            'b395b173f381d0209f51d9bc9bab5506113cf2f5b671c3ba3a4ab6f5eee77e95ff55d7d5f7e657b97b2ef7c9c3b2b15eb22b5eef8f392dcc2dec671180cb3b72'
+            'e54c2f5a4cdeff5850828072890679e07da07cfa3663cf9bfb1e6b8f5bca0dc15e6b4b9a2a6c111b796a0440035beea419cda9bf4ec5d476d4fbb54c1b4ad7fd')
         
 
 prepare() {
-    cd "$srcdir/kdesktop"
+    cd "$srcdir/$pkgname-$pkgver-$pkgrel"
         git submodule init
         
         git config submodule.Telegram/ThirdParty/Catch.url "$srcdir/Catch2"
@@ -115,7 +113,7 @@ prepare() {
 }
 
 build() {
-    cd "$srcdir/kdesktop"
+    cd "$srcdir/$pkgname-$pkgver-$pkgrel"
         export LANG=en_US.UTF-8
         export GYP_DEFINES="DESKTOP_APP_DISABLE_CRASH_REPORTS,TDESKTOP_DISABLE_AUTOUPDATE,TDESKTOP_DISABLE_REGISTER_CUSTOM_SCHEME,TDESKTOP_DISABLE_DESKTOP_FILE_GENERATION"
         export EXTRA_FLAGS="-Winvalid-pch"
@@ -136,17 +134,17 @@ build() {
         --depth=Telegram/gyp --generator-output=../.. -Goutput_dir=out Telegram/gyp/Telegram.gyp --format=cmake
         NUM=$((`wc -l < out/Release/CMakeLists.txt` - 2))
         sed -i "$NUM r ../CMakeLists.inj" out/Release/CMakeLists.txt
-        cd "$srcdir/kdesktop/out/Release"
+        cd "$srcdir/$pkgname-$pkgver-$pkgrel/out/Release"
         cmake . -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -UTDESKTOP_OFFICIAL_TARGET
         make
 }
 
 package() {
     install -dm755 "$pkgdir/usr/bin"
-        install -m755 "$srcdir/kdesktop/out/Release/Telegram" "$pkgdir/usr/bin/kotatogram-desktop"
+        install -m755 "$srcdir/$pkgname-$pkgver-$pkgrel/out/Release/Telegram" "$pkgdir/usr/bin/kotatogram-desktop"
 
         install -d "$pkgdir/usr/share/applications"
-        install -m644 "$srcdir/kdesktop/lib/xdg/kotatogramdesktop.desktop" "$pkgdir/usr/share/applications/kotatogramdesktop.desktop"
+        install -m644 "$srcdir/$pkgname-$pkgver-$pkgrel/lib/xdg/kotatogramdesktop.desktop" "$pkgdir/usr/share/applications/kotatogramdesktop.desktop"
 
         install -d "$pkgdir/usr/share/kservices5"
         install -m644 "$srcdir/tg.protocol" "$pkgdir/usr/share/kservices5/tg.protocol"
@@ -156,6 +154,6 @@ package() {
             icon_dir="$pkgdir/usr/share/icons/hicolor/${icon_size}x${icon_size}/apps"
 
                 install -d "$icon_dir"
-                install -m644 "$srcdir/kdesktop/Telegram/Resources/art/icon${icon_size}.png" "$icon_dir/kotatogram.png"
+                install -m644 "$srcdir/$pkgname-$pkgver-$pkgrel/Telegram/Resources/art/icon${icon_size}.png" "$icon_dir/kotatogram.png"
                 done
 }
