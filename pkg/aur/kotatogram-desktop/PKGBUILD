@@ -30,6 +30,8 @@ makedepends=(
 optdepends=(
         'libnotify: desktop notifications'
         )
+conflicts=('kotatogram-desktop-bin' 'telegram-desktop' 'telegram-desktop-bin')
+provides=('kotatogram-desktop')
 source=(
         "$pkgname-$pkgver-$pkgrel::git+$url.git#tag=k$pkgver"
         "Catch2::git+https://github.com/catchorg/Catch2.git"
