@@ -28,7 +28,7 @@ provides=('kotatogram-desktop')
 
 # Sources
 source=(
-	$pkgname-$pkgver::$url/releases/download/k$pkgver/$pkgver.tar.xz
+	$pkgname-$pkgver-$pkgrel::$url/releases/download/k$pkgver/$pkgver.tar.xz
 
 	https://raw.githubusercontent.com/kotatogram/kotatogram-desktop/k$pkgver/lib/xdg/tg.protocol
 	https://raw.githubusercontent.com/kotatogram/kotatogram-desktop/k$pkgver/lib/xdg/kotatogramdesktop.desktop
