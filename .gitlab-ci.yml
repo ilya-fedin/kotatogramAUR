@@ -33,14 +33,14 @@ package-aur:
         - cd kotatogram-desktop/
         - echo "makepkg"
         - sudo -u nobody updpkgsums
-        # - sudo -u nobody makepkg -c
+        - sudo -u nobody makepkg -c
         - sudo -u nobody makepkg --printsrcinfo > .SRCINFO
         - cd ..
 
         - cd kotatogram-desktop-bin/
         - echo "makepkg"
         - sudo -u nobody updpkgsums
-        # - sudo -u nobody makepkg -c
+        - sudo -u nobody makepkg -c
         - sudo -u nobody makepkg --printsrcinfo > .SRCINFO
         - cd ..
         
@@ -63,7 +63,7 @@ package-aur:
         - cp -r kotatogram-desktop/. aur-kotatogram-desktop
         - cd aur-kotatogram-desktop
         - git add --all
-        - git commit -m "Release k$_version"
+        - git commit --allow-empty -m "Release k$_version"
         - git push
         - cd ..
         
@@ -71,6 +71,6 @@ package-aur:
         - cp -r kotatogram-desktop-bin/. aur-kotatogram-desktop-bin
         - cd aur-kotatogram-desktop-bin
         - git add --all
-        - git commit -m "Release k$_version"
+        - git commit --allow-empty -m "Release k$_version"
         - git push
         - cd ..
