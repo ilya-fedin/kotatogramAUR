@@ -7,6 +7,8 @@ package-aur:
     stage: package-aur
     only:
         - /^k(\d+\.)*\d+$/
+    variables:
+        SUDOERS: "builduser ALL=(ALL) NOPASSWD: ALL"
     script:
         - cd ./pkg/aur
 
@@ -18,32 +20,42 @@ package-aur:
 
         - sed "s/^pkgver=.*\$/pkgver=$_version/" -i kotatogram-desktop/PKGBUILD
         - sed "s/^pkgver=.*\$/pkgver=$_version/" -i kotatogram-desktop-bin/PKGBUILD
- 
+
           # Install dependencies
         - echo "Installing Arch"
         - pacman -Sy reflector --noconfirm
         - reflector --verbose --latest 50 --sort rate --save /etc/pacman.d/mirrorlist
-        - pacman -Syu --noconfirm base-devel chrpath cmake ffmpeg git git gyp hicolor-icon-theme libappindicator-gtk3 minizip openal openssh openssl pacman-contrib python qt5-base qt5-imageformats range-v3 sudo
+        - pacman -Syu --noconfirm base-devel chrpath cmake ffmpeg git git gyp hicolor-icon-theme libappindicator-gtk3 minizip openal openssh openssl pacman-contrib python qt5-base qt5-imageformats range-v3 sudo go
 
           # Speed up build process
         - sed -i '/MAKEFLAGS=/s/^#//g' /etc/makepkg.conf
         - sed -i '/MAKEFLAGS/s/-j1/-j$(($(nproc)-1))/g' /etc/makepkg.conf
-        
-          # Update sha512sums and .SRCINFO for both packages
-        - cd kotatogram-desktop/
-        - echo "makepkg"
-        - sudo -u nobody updpkgsums
-        - sudo -u nobody makepkg -c
-        - sudo -u nobody makepkg --printsrcinfo > .SRCINFO
-        - cd ..
 
-        - cd kotatogram-desktop-bin/
-        - echo "makepkg"
-        - sudo -u nobody updpkgsums
-        - sudo -u nobody makepkg -c
-        - sudo -u nobody makepkg --printsrcinfo > .SRCINFO
-        - cd ..
-        
+          # Install yay
+        - useradd -m builduser
+        - echo $SUDOERS > /etc/sudoers.d/builduser
+        - pushd /home/builduser > /dev/null
+        - su -c 'git clone https://aur.archlinux.org/yay.git' builduser
+        - pushd yay > /dev/null
+        - su -c 'makepkg -sric --noconfirm' builduser
+        - popd > /dev/null
+        - popd > /dev/null
+
+          # Update sha512sums and .SRCINFO for both packages
+        - pushd kotatogram-desktop > /dev/null
+        - su -c updpkgsums builduser
+        - su -c '. PKGBUILD; yay -S ${makedepends[@]} ${depends[@]} --noconfirm' builduser
+        - su -c 'makepkg -c' builduser
+        - su -c 'makepkg --printsrcinfo > .SRCINFO' builduser
+        - popd > /dev/null
+
+        - pushd kotatogram-desktop-bin > /dev/null
+        - su -c updpkgsums builduser
+        - su -c '. PKGBUILD; yay -S ${makedepends[@]} ${depends[@]} --noconfirm' builduser
+        - su -c 'makepkg -c' builduser
+        - su -c 'makepkg --printsrcinfo > .SRCINFO' builduser
+        - popd > /dev/null
+
           # Configure SSH
         - mkdir -p /root/.ssh
         - cp ./aur.pub /root/.ssh/id_rsa.pub
@@ -66,7 +78,7 @@ package-aur:
         - git commit --allow-empty -m "Release k$_version"
         - git push
         - cd ..
-        
+
         - git clone ssh://aur@aur.archlinux.org/kotatogram-desktop-bin.git aur-kotatogram-desktop-bin
         - cp -r kotatogram-desktop-bin/. aur-kotatogram-desktop-bin
         - cd aur-kotatogram-desktop-bin

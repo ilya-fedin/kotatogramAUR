@@ -2,7 +2,7 @@
 
 pkgname=kotatogram-desktop-bin
 pkgver=0.0.0 # automatically set in CI, see: /.gitlab-ci.yml
-pkgrel=3
+pkgrel=1
 pkgdesc="Experimental Telegram Desktop fork with option to select custom fonts. - Static binaries"
 arch=(x86_64)
 url="https://github.com/kotatogram/kotatogram-desktop"

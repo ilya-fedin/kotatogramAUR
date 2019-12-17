@@ -2,7 +2,7 @@
 
 pkgname=kotatogram-desktop
 pkgver=1.1.1 # automatically set in CI, see: /.gitlab-ci.yml
-pkgrel=6
+pkgrel=1
 pkgdesc="Experimental Telegram Desktop fork with option to select custom fonts."
 arch=(x86_64)
 url="https://github.com/kotatogram/kotatogram-desktop"
@@ -56,12 +56,10 @@ source=(
 	"fix-unneeded-private-header.patch"
 	"Use-system-wide-font.patch"
 	"Use-system-wide-font-families.patch"
-	"Parse-Semibold-Fontnames.patch"
 	"QtDBus-Notifications-Implementation.patch"
 	"system-tray-icon.patch"
 	"linux-autostart.patch"
 	"Use-native-notifications-by-default.patch"
-	"baloons-follows-text-width-on-adaptive-layout.patch"
 
 	"CMakeLists.inj"
 	"autostart.desktop"
@@ -127,8 +125,6 @@ prepare() {
 	for i in $srcdir/*.patch; do
 		patch -Np1 -i "$i"
 	done
-
-	git cherry-pick -n 'a196b0aba723de85ee573594d9ad420412b6391a'
 }
 
 build() {
