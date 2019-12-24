@@ -31,7 +31,7 @@ package-aur:
         - sed -i '/MAKEFLAGS=/s/^#//g' /etc/makepkg.conf
         - sed -i '/MAKEFLAGS/s/-j1/-j$(($(nproc)-1))/g' /etc/makepkg.conf
 
-          # Install yay
+          # Install yay to install AUR dependencies
         - useradd -m builduser
         - echo $SUDOERS > /etc/sudoers.d/builduser
         - pushd /home/builduser > /dev/null
