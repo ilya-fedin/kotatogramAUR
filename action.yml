@@ -1,0 +1,10 @@
+name: 'Build package'
+inputs:
+  package-name:
+    description: 'Package name'
+    required: true
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.package-name }}
