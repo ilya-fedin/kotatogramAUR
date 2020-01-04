@@ -1,8 +1,8 @@
 # Maintainer: Auteiy <dmitry@auteiy.me>
 
 pkgname=kotatogram-desktop
-pkgver=1.1.1 # automatically set in CI, see: /.gitlab-ci.yml
-pkgrel=1
+pkgver=1.1.2 # automatically set in CI, see: /.gitlab-ci.yml
+pkgrel=2
 pkgdesc="Experimental Telegram Desktop fork with option to select custom fonts."
 arch=(x86_64)
 url="https://github.com/kotatogram/kotatogram-desktop"
@@ -18,17 +18,25 @@ depends=(
 	zlib
 	minizip
 	openssl
-	libtgvoip
+	opus
+	alsa-lib
+	libpulse
 	rlottie-tdesktop
 	hicolor-icon-theme
 	desktop-file-utils
 )
 makedepends=(
 	git
-	gyp
+	python
 	cmake
 	ninja
 	range-v3
+	enchant
+	dos2unix
+)
+optdepends=(
+	'enchant: spellchecking support'
+	'ttf-opensans: default Open Sans font family'
 )
 conflicts=('kotatogram-desktop-bin' 'telegram-desktop' 'telegram-desktop-bin')
 source=(
@@ -52,16 +60,20 @@ source=(
 	"lib_tl::git+https://github.com/desktop-app/lib_tl.git"
 	"lib_ui::git+https://github.com/kotatogram/lib_ui.git"
 
-	"tdesktop.patch"
-	"fix-unneeded-private-header.patch"
+	"https://raw.githubusercontent.com/telegramdesktop/tdesktop/100fed362271ada828fdaeb27e52f660a5a05d18/Telegram/Resources/icons/intro_qr_plane.png"
+	"https://raw.githubusercontent.com/telegramdesktop/tdesktop/100fed362271ada828fdaeb27e52f660a5a05d18/Telegram/Resources/icons/intro_qr_plane@2x.png"
+	"https://raw.githubusercontent.com/telegramdesktop/tdesktop/100fed362271ada828fdaeb27e52f660a5a05d18/Telegram/Resources/icons/intro_qr_plane@3x.png"
+
+	"update-to-v1.9.3.patch"
+	"cmake-rules-fix.patch"
+	"fix-spellcheck.patch"
+	"Use-system-font.patch"
 	"Use-system-wide-font.patch"
-	"Use-system-wide-font-families.patch"
-	"QtDBus-Notifications-Implementation.patch"
 	"system-tray-icon.patch"
 	"linux-autostart.patch"
+	"Use-system-font-by-default.patch"
 	"Use-native-notifications-by-default.patch"
 
-	"CMakeLists.inj"
 	"autostart.desktop"
 )
 # Checksums automatically set in CI, see: /.gitlab-ci.yml
@@ -122,14 +134,27 @@ prepare() {
 
 	git submodule update
 
-	for i in $srcdir/*.patch; do
-		patch -Np1 -i "$i"
-	done
+	dos2unix "$srcdir/$pkgname-$pkgver-$pkgrel/Telegram/build/build.bat"
+
+	patch -Np1 -i "$srcdir/update-to-v1.9.3.patch"
+	patch -Np1 -i "$srcdir/cmake-rules-fix.patch"
+	patch -Np1 -i "$srcdir/fix-spellcheck.patch"
+	patch -Np1 -i "$srcdir/Use-system-font.patch"
+	patch -Np1 -i "$srcdir/Use-system-wide-font.patch"
+	patch -Np1 -i "$srcdir/system-tray-icon.patch"
+	patch -Np1 -i "$srcdir/linux-autostart.patch"
+	patch -Np1 -i "$srcdir/Use-system-font-by-default.patch"
+	patch -Np1 -i "$srcdir/Use-native-notifications-by-default.patch"
+
+	unix2dos "$srcdir/$pkgname-$pkgver-$pkgrel/Telegram/build/build.bat"
+
+	cp "$srcdir/intro_qr_plane.png" "$srcdir/$pkgname-$pkgver-$pkgrel/Telegram/Resources/icons/intro_qr_plane.png"
+	cp "$srcdir/intro_qr_plane@2x.png" "$srcdir/$pkgname-$pkgver-$pkgrel/Telegram/Resources/icons/intro_qr_plane@2x.png"
+	cp "$srcdir/intro_qr_plane@3x.png" "$srcdir/$pkgname-$pkgver-$pkgrel/Telegram/Resources/icons/intro_qr_plane@3x.png"
 }
 
 build() {
 	cd "$srcdir/$pkgname-$pkgver-$pkgrel"
-	export GYP_DEFINES="DESKTOP_APP_DISABLE_CRASH_REPORTS,TDESKTOP_DISABLE_AUTOUPDATE,TDESKTOP_DISABLE_REGISTER_CUSTOM_SCHEME,TDESKTOP_DISABLE_DESKTOP_FILE_GENERATION,TDESKTOP_DISABLE_GTK_INTEGRATION"
 
 	# Telegram requires us to set API_ID and API_HASH for some reason but they do not provide a way to receive a pair
 	# See https://github.com/telegramdesktop/tdesktop/commit/65b2db216033aa08b7bc846df27843e566f08981 and
@@ -137,23 +162,20 @@ build() {
 	# The official API_ID seems to be 2040 while the API_HASH is "b18441a1ff607e10a989891a5462e627".
 	# We're going to use the defaults for now but might at some point use the official ones from the official binaries as noted above.
 
-	gyp \
-		-Dapi_id=17349 \
-		-Dapi_hash=344583e45741c457fe1862106095a5eb \
-		-Dbuild_defines=${GYP_DEFINES} \
-		-Dlottie_use_cache=1 \
-		-Gconfig=Release \
-		--depth=Telegram/gyp --generator-output=../.. -Goutput_dir=out Telegram/gyp/Telegram.gyp --format=cmake
-	NUM=$((`wc -l < out/Release/CMakeLists.txt` - 2))
-	sed -i "$NUM r ../CMakeLists.inj" out/Release/CMakeLists.txt
-	cd "$srcdir/$pkgname-$pkgver-$pkgrel/out/Release"
-	cmake -G Ninja .
+	cmake -G Ninja . \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DTDESKTOP_API_TEST=ON \
+		-DDESKTOP_APP_DISABLE_CRASH_REPORTS=ON \
+		-DTDESKTOP_DISABLE_REGISTER_CUSTOM_SCHEME=ON \
+		-DTDESKTOP_DISABLE_DESKTOP_FILE_GENERATION=ON \
+		-DTDESKTOP_DISABLE_GTK_INTEGRATION=ON
+
 	cmake --build .
 }
 
 package() {
 	install -dm755 "$pkgdir/usr/bin"
-	install -m755 "$srcdir/$pkgname-$pkgver-$pkgrel/out/Release/Telegram" "$pkgdir/usr/bin/kotatogram-desktop"
+	install -m755 "$srcdir/$pkgname-$pkgver-$pkgrel/bin/Telegram" "$pkgdir/usr/bin/kotatogram-desktop"
 
 	install -d "$pkgdir/usr/share/KotatogramDesktop/autostart"
 	install -m644 "$srcdir/autostart.desktop" "$pkgdir/usr/share/KotatogramDesktop/autostart/kotatogramdesktop.desktop"
