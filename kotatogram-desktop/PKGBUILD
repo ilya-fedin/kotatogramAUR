@@ -20,8 +20,6 @@ depends=(
 	minizip
 	openssl
 	opus
-	alsa-lib
-	libpulse
 	hicolor-icon-theme
 	desktop-file-utils
 )
@@ -30,6 +28,8 @@ makedepends=(
 	python
 	cmake
 	ninja
+	alsa-lib
+	libpulse
 	range-v3
 	enchant
 	dos2unix
