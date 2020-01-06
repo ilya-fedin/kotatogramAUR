@@ -3,6 +3,9 @@ inputs:
   package-name:
     description: 'Package name'
     required: true
+outputs:
+  package-file:
+    description: 'Name of the package file'
 runs:
   using: 'docker'
   image: 'Dockerfile'
