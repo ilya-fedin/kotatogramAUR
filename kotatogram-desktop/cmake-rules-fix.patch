@@ -2941,39 +2941,50 @@ index c7a1244..484ea91 100644
          XCODE_ATTRIBUTE_GCC_INLINES_ARE_PRIVATE_EXTERN YES
          XCODE_ATTRIBUTE_GCC_SYMBOLS_PRIVATE_EXTERN YES
 diff --git a/cmake/options_linux.cmake b/cmake/options_linux.cmake
-index a6a13c9..673defa 100644
+index a6a13c9..5b22b8d 100644
 --- a/cmake/options_linux.cmake
 +++ b/cmake/options_linux.cmake
-@@ -9,7 +9,6 @@ INTERFACE
-     $<IF:$<CONFIG:Debug>,,-Ofast -fno-strict-aliasing>
+@@ -6,10 +6,9 @@
+ 
+ target_compile_options(common_options
+ INTERFACE
+-    $<IF:$<CONFIG:Debug>,,-Ofast -fno-strict-aliasing>
++    $<IF:$<CONFIG:Debug>,,-fno-strict-aliasing>
      -pipe
      -Wall
 -    -Werror
      -W
      -fPIC
      -Wno-unused-variable
-@@ -26,6 +25,9 @@ INTERFACE
+@@ -26,14 +25,21 @@ INTERFACE
      -Wno-maybe-uninitialized
      -Wno-error=class-memaccess
  )
+-target_link_options(common_options
+-INTERFACE
+-    $<IF:$<CONFIG:Debug>,,-Ofast>
+-)
 +if (NOT DESKTOP_APP_USE_PACKAGED)
-+    target_compile_options(common_options INTERFACE -Werror)
++    target_compile_options(common_options
++    INTERFACE
++        $<IF:$<CONFIG:Debug>,,-Ofast>
++        -Werror
++    )
++    target_link_options(common_options
++    INTERFACE
++        $<IF:$<CONFIG:Debug>,,-Ofast>
++    )
 +endif()
- target_link_options(common_options
- INTERFACE
-     $<IF:$<CONFIG:Debug>,,-Ofast>
-@@ -33,6 +35,9 @@ INTERFACE
  if (build_linux32)
      target_compile_options(common_options INTERFACE -g0)
      target_link_options(common_options INTERFACE -g0)
-+elseif (DESKTOP_APP_USE_PACKAGED)
-+    target_compile_options(common_options INTERFACE $<IF:$<CONFIG:Debug>,,-g>)
-+    target_link_options(common_options INTERFACE $<IF:$<CONFIG:Debug>,,-g>)
- else()
+-else()
++elseif (NOT DESKTOP_APP_USE_PACKAGED)
      target_compile_options(common_options INTERFACE $<IF:$<CONFIG:Debug>,,-g -flto>)
      target_link_options(common_options INTERFACE $<IF:$<CONFIG:Debug>,,-g -flto -fuse-linker-plugin>)
+ endif()
 diff --git a/cmake/variables.cmake b/cmake/variables.cmake
-index b3d7ff4..2d5c371 100644
+index b3d7ff4..10031e7 100644
 --- a/cmake/variables.cmake
 +++ b/cmake/variables.cmake
 @@ -10,6 +10,7 @@ option(DESKTOP_APP_DISABLE_SPELLCHECK "Disable spellcheck library." OFF)
@@ -2984,3 +2995,18 @@ index b3d7ff4..2d5c371 100644
  
  function(report_bad_special_target)
      message(FATAL_ERROR "Bad special target '${DESKTOP_APP_SPECIAL_TARGET}'")
+@@ -74,9 +75,11 @@ else()
+     elseif (NOT DESKTOP_APP_SPECIAL_TARGET STREQUAL "")
+         report_bad_special_target()
+     endif()
+-    set(CMAKE_AR /usr/bin/gcc-ar)
+-    set(CMAKE_RANLIB /usr/bin/gcc-ranlib)
+-    set(CMAKE_NM /usr/bin/gcc-nm)
++    if (NOT DESKTOP_APP_USE_PACKAGED)
++        set(CMAKE_AR /usr/bin/gcc-ar)
++        set(CMAKE_RANLIB /usr/bin/gcc-ranlib)
++        set(CMAKE_NM /usr/bin/gcc-nm)
++    endif()
+ endif()
+ 
+ if (NOT APPLE OR build_osx)
