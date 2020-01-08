@@ -4,9 +4,9 @@
 pkgname=kotatogram-desktop
 pkgver=1.1.2
 pkgrel=4
-pkgdesc="Unofficial desktop client for the Telegram messenger, based on Telegram Desktop."
+pkgdesc="Kotatogram – experimental Telegram Desktop fork"
 arch=(x86_64)
-url="https://github.com/kotatogram/kotatogram-desktop"
+url="https://kotatogram.github.io"
 license=(GPL3)
 depends=(
 	qt5-base
@@ -37,9 +37,9 @@ optdepends=(
 	'enchant: spellchecking support'
 	'ttf-opensans: default Open Sans font family'
 )
-conflicts=('kotatogram-desktop-bin' 'telegram-desktop' 'telegram-desktop-bin')
+conflicts=('kotatogram-desktop-bin' 'kotatogram-desktop-dynamic-bin' 'telegram-desktop' 'telegram-desktop-bin')
 source=(
-	"$pkgname::git+$url.git#tag=k$pkgver"
+	"${pkgname}::git+https://github.com/kotatogram/${pkgname}.git#tag=k${pkgver}"
 
 	"Catch2::git+https://github.com/catchorg/Catch2.git"
 	"crl::git+https://github.com/telegramdesktop/crl.git"
