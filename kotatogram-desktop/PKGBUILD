@@ -78,7 +78,7 @@ sha512sums=('SKIP'
             'SKIP'
             'SKIP'
             'SKIP'
-			'SKIP')
+            'SKIP')
 
 prepare() {
 	cd "$srcdir/$pkgname"
