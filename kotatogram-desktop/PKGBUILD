@@ -19,6 +19,7 @@ depends=(
 	zlib
 	minizip
 	openssl
+	libdbusmenu-qt5
 	hunspell
 	libtgvoip
 	hicolor-icon-theme
@@ -29,8 +30,9 @@ makedepends=(
 	python
 	cmake
 	ninja
+	microsoft-gsl
+	tl-expected
 	range-v3
-	enchant
 )
 optdepends=(
 	'ttf-opensans: default Open Sans font family'
