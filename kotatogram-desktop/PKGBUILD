@@ -2,7 +2,7 @@
 # Contributor: Auteiy <dmitry@auteiy.me>
 
 pkgname=kotatogram-desktop
-pkgver=1.1.6
+pkgver=1.2
 pkgrel=1
 pkgdesc="Kotatogram – experimental Telegram Desktop fork"
 arch=(x86_64)
@@ -19,8 +19,8 @@ depends=(
 	zlib
 	minizip
 	openssl
+	hunspell
 	libtgvoip
-	rlottie-tdesktop
 	hicolor-icon-theme
 	desktop-file-utils
 )
@@ -33,7 +33,6 @@ makedepends=(
 	enchant
 )
 optdepends=(
-	'enchant: spellchecking support'
 	'ttf-opensans: default Open Sans font family'
 )
 conflicts=('kotatogram-desktop-bin' 'kotatogram-desktop-dynamic-bin')
@@ -57,8 +56,6 @@ source=(
 	"lib_spellcheck::git+https://github.com/desktop-app/lib_spellcheck.git"
 	"lib_tl::git+https://github.com/desktop-app/lib_tl.git"
 	"lib_ui::git+https://github.com/kotatogram/lib_ui.git"
-
-	"system-tray-icon.patch"
 )
 sha512sums=('SKIP'
             'SKIP'
@@ -77,8 +74,7 @@ sha512sums=('SKIP'
             'SKIP'
             'SKIP'
             'SKIP'
-            'SKIP'
-            '6bdb73dd7ebd8cd50da0f09f2f1fa201e687fee949c4a05f90e62e7e6167ccca877a078021ca611ce8fbb464aab329b92270f07e0cb770c2b7a89a436d37549a')
+            'SKIP')
 
 prepare() {
 	cd "$srcdir/$pkgname"
@@ -105,8 +101,6 @@ prepare() {
 	git config submodule.Telegram/lib_ui.url "$srcdir/lib_ui"
 
 	git submodule update
-
-	patch -Np1 -i "$srcdir/system-tray-icon.patch"
 }
 
 build() {
@@ -116,7 +110,7 @@ build() {
 		-DCMAKE_INSTALL_PREFIX=/usr \
 		-DCMAKE_BUILD_TYPE=Release \
 		-DTDESKTOP_API_TEST=ON \
-		-DTDESKTOP_DISABLE_GTK_INTEGRATION=ON
+		-DDESKTOP_APP_USE_PACKAGED_RLOTTIE=OFF
 
 	cmake --build .
 }
