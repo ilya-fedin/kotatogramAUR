@@ -41,8 +41,6 @@ source=("https://github.com/kotatogram/${pkgname}/releases/download/k${pkgver}/$
 sha512sums=('88f99d9a9815adbe3d5ef95ac15a2c3ed8b31a785bc4cf50d8883a3f1b3b974443f0ec2ff6bb31677b43114467f87586de0c6d31bc4c3cfd52f44e45aa85ab6f')
 
 build() {
-	cd ${pkgname}-${pkgver}-full
-
 	cmake -G Ninja . \
 		-DCMAKE_INSTALL_PREFIX=/usr \
 		-DCMAKE_BUILD_TYPE=Release \
@@ -54,6 +52,5 @@ build() {
 }
 
 package() {
-	cd ${pkgname}-${pkgver}-full
 	DESTDIR="$pkgdir" cmake --install .
 }
