@@ -45,7 +45,7 @@ sha512sums=('f0255e1bcbf1703c684e3c71392156002456a988f4128107e0181b4f4b9956073c2
             'b4c4a552f7a3546529a226334ca1f87e96bc9a94e440b62bdf6bd85a48cda35c57282923ec139af1d190e77046ac0dc1662c6b2126ef4c5b4222c194a2635806')
 
 prepare() {
-    cd tdesktop-$pkgver-full
+    cd ${pkgname}-$pkgver-full
     patch -p1 < ${srcdir}/telegram-desktop-qt5.15.patch
     patch -p1 < ${srcdir}/0001-Add-an-option-to-hide-messages-from-blocked-users-in.patch
 }
