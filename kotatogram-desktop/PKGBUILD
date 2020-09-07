@@ -39,7 +39,8 @@ source=(
 	"https://github.com/kotatogram/${pkgname}/releases/download/k${pkgver}/${pkgname}-${pkgver}-full.tar.gz"
 	"0001-Add-an-option-to-hide-messages-from-blocked-users-in.patch"
 )
-sha512sums=('f0255e1bcbf1703c684e3c71392156002456a988f4128107e0181b4f4b9956073c29c27ff19d8416b19b3d836da999b39a421bd9755683013eec71ff51104f38')
+sha512sums=('f0255e1bcbf1703c684e3c71392156002456a988f4128107e0181b4f4b9956073c29c27ff19d8416b19b3d836da999b39a421bd9755683013eec71ff51104f38'
+            'b4c4a552f7a3546529a226334ca1f87e96bc9a94e440b62bdf6bd85a48cda35c57282923ec139af1d190e77046ac0dc1662c6b2126ef4c5b4222c194a2635806')
 
 build() {
 	cd ${pkgname}-${pkgver}-full
