@@ -1,8 +1,9 @@
 FROM archlinux/base
 
-RUN pacman -Sy --noconfirm reflector
+RUN pacman -Syu --noconfirm
+RUN pacman -S --noconfirm reflector
 RUN reflector --verbose --latest 50 --sort rate --save /etc/pacman.d/mirrorlist
-RUN pacman -Syu --noconfirm base-devel pacman-contrib git sudo
+RUN pacman -S --noconfirm base-devel pacman-contrib git sudo
 
 RUN sed -i '/MAKEFLAGS=/s/^#//g' /etc/makepkg.conf
 RUN sed -i '/MAKEFLAGS/s/-j1/-j$(($(nproc)+1))/g' /etc/makepkg.conf
