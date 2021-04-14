@@ -12,7 +12,7 @@ depends=('hunspell' 'ffmpeg' 'hicolor-icon-theme' 'lz4' 'minizip' 'openal' 'ttf-
 makedepends=('cmake' 'git' 'ninja' 'python' 'range-v3' 'tl-expected' 'microsoft-gsl' 'libtg_owt')
 conflicts=('kotatogram-desktop-bin' 'kotatogram-desktop-dynamic-bin')
 source=("${pkgname}::git+https://github.com/kotatogram/${pkgname}.git#tag=k${pkgver}"
-        "${pkgname}-desktop-libtgvoip::git+https://github.com/telegramdesktop/libtgvoip"
+        "${pkgname}-libtgvoip::git+https://github.com/telegramdesktop/libtgvoip"
         "${pkgname}-rlottie::git+https://github.com/desktop-app/rlottie.git"
         "${pkgname}-lib_crl::git+https://github.com/desktop-app/lib_crl.git"
         "${pkgname}-lib_rpl::git+https://github.com/desktop-app/lib_rpl.git"
