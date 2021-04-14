@@ -46,7 +46,7 @@ sha512sums=('SKIP'
             'SKIP'
             'SKIP'
             'SKIP'
-            '0ac5dba05542e7ff8a395395ef9dd681160b56ee20f835f4252dd48fa3021eee73e76d880d3b8e0805e4eb764b461f407e6a66116d2e924e0933d233a8bab2c9')
+            '13357d081fb658c735bb2575360f5d48214e1cf5002719ba410405a2fe05c7c3d2379588c2ca3c2ca6a5e6ff64e01e6d1ff3aecdaee8f3dd0519a64f6ee94182')
 
 prepare() {
     cd "${srcdir}/${pkgname}"
