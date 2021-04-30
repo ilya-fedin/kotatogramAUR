@@ -29,8 +29,10 @@ source=("${pkgname}::git+https://github.com/kotatogram/${pkgname}.git#tag=k${pkg
         "${pkgname}-lib_qr::git+https://github.com/desktop-app/lib_qr.git"
         "${pkgname}-lib_webrtc::git+https://github.com/desktop-app/lib_webrtc.git"
         "${pkgname}-tgcalls::git+https://github.com/TelegramMessenger/tgcalls.git"
+        "${pkgname}-lib_webview::git+https://github.com/kotatogram/lib_webrtc.git"
         "0001-Add-an-option-to-hide-messages-from-blocked-users-in.patch")
 sha512sums=('SKIP'
+            'SKIP'
             'SKIP'
             'SKIP'
             'SKIP'
@@ -68,8 +70,9 @@ prepare() {
     git config submodule.cmake.url "${srcdir}/${pkgname}-cmake_helpers"
     git config submodule.Telegram/ThirdParty/QR.url "${srcdir}/${pkgname}-QR-Code-generator"
     git config submodule.Telegram/lib_qr.url "${srcdir}/${pkgname}-lib_qr"
-    git config sumbodule.Telegram/lib_webrtc.url "${srcdir}/${pkgname}-lib_webrtc"
-    git config sumbodule.Telegram/ThirdParty/tgcalls.url "${srcdir}/${pkgname}-tgcalls"
+    git config submodule.Telegram/lib_webrtc.url "${srcdir}/${pkgname}-lib_webrtc"
+    git config submodule.Telegram/ThirdParty/tgcalls.url "${srcdir}/${pkgname}-tgcalls"
+    git config submodule.Telegram/lib_webview.url "${srcdir}/${pkgname}-lib_webview"
     git submodule update
 
     pushd cmake
