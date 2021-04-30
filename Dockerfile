@@ -1,4 +1,4 @@
-FROM archlinux/base
+FROM archlinux
 
 RUN pacman -Syu --noconfirm
 RUN pacman -S --noconfirm reflector
