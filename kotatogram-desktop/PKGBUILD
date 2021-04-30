@@ -29,7 +29,7 @@ source=("${pkgname}::git+https://github.com/kotatogram/${pkgname}.git#tag=k${pkg
         "${pkgname}-lib_qr::git+https://github.com/desktop-app/lib_qr.git"
         "${pkgname}-lib_webrtc::git+https://github.com/desktop-app/lib_webrtc.git"
         "${pkgname}-tgcalls::git+https://github.com/TelegramMessenger/tgcalls.git"
-        "${pkgname}-lib_webview::git+https://github.com/kotatogram/lib_webrtc.git"
+        "${pkgname}-lib_webview::git+https://github.com/kotatogram/lib_webview.git"
         "0001-Add-an-option-to-hide-messages-from-blocked-users-in.patch")
 sha512sums=('SKIP'
             'SKIP'
