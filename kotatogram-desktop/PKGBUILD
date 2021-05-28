@@ -41,6 +41,7 @@ source=("${pkgname}::git+https://github.com/kotatogram/${pkgname}.git#tag=k${pkg
         "https://github.com/telegramdesktop/tdesktop/commit/d87ea056c6166345d061fc3a69a6f95eceaab0a1.patch"
         "https://github.com/telegramdesktop/tdesktop/commit/98180d3a9e994081a134196adad0023651d28bf3.patch"
         "https://github.com/telegramdesktop/tdesktop/commit/383acf0ffc489990302797ff0f048519b3c7c9bf.patch"
+        "lib_base-gcc11-fix.patch"
         "mallocng.patch"
         "https://github.com/desktop-app/cmake_helpers/commit/5318ac7c54dbf33b17ccc4bd3281bb8b8db25e02.patch"
         "https://github.com/desktop-app/cmake_helpers/commit/de65519132126db2c2166cdf5af5f12e61652419.patch"
@@ -73,6 +74,7 @@ sha512sums=('SKIP'
             'b285c65c2e6bb70730eddca2fe6b58e0d0cee466f919913f00f5b81fd4e67e3edd147de572bb5604317ad0c16b568ae4001e63433bd40d6a910b9cdb6aa61d83'
             'fcc4c5f649381ace974a3b73cd76f7dd3e78c3a8c0d0bffeccd3e66ec45b84c0cada1f6fd91e1498e0442ed70b679d6b975b499b1f37d25113053b38c873e9e7'
             'c5511bd073095a171b998ae8425d01305ac7927398640c0b62d5dcbcc2184e8dae25c1430a5950c45fac38ec5de353449765454f428fa6e16dc588214edd8db8'
+            'ce364d20b9c3e8d65d4d0def6c2f025e16814c8782c78f720ee5e9891e0b296c6edca9f3a7fa46652516c6a748e29a8cdbbf5f7d1273e4e1a64c7216275c5cda'
             '12c6a439b3960cb5a25edd2b2b1959f96fdbba634f281890f5ec91420834a852a7bcfa5d11051dfdf4fe719137345b23ae77a8e48eb6b9444ad973a34574cb84'
             '2f7c24851e9879b238366c82f35a046c5a69ec5059e6441ac6eae578450669f094bb659a63b79be635dcae93ddd388bc957e29a219cc3cfc0e6591f0f333d7e3'
             '6bce17e6e763859a95a35ff759b56aa5e51b7ba7534d5502517ae3a970cb42d901b2f6a9862a4ef06adfa5ef85e6e3e517a16ce7ab516ee9f3e4c21c38bb8cdb'
@@ -116,6 +118,9 @@ prepare() {
     patch -p1 < ${srcdir}/d87ea056c6166345d061fc3a69a6f95eceaab0a1.patch
     patch -p1 < ${srcdir}/98180d3a9e994081a134196adad0023651d28bf3.patch
     patch -p1 < ${srcdir}/383acf0ffc489990302797ff0f048519b3c7c9bf.patch
+    pushd Telegram/lib_base
+    patch -p1 < ${srcdir}/lib_base-gcc11-fix.patch
+    popd
 
     # backported mallocng usage
     patch -p1 < ${srcdir}/mallocng.patch
